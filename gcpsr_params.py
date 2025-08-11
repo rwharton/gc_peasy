@@ -55,7 +55,7 @@ ftool_opts = '-t 24 -z kadaneF 4 8 zdot'
 #        --dm_file my_dm_trials.txt \
 #        --ram_limit_gb 180.0 \
 #        -n 4
-psoup_opts = '-m 7.0 -t 2 --acc_start -100 --acc_end 100 --ram_limit_gb 20.0 --dm_start 500 --dm_end 3000 -n 4' 
+psoup_opts = '-m 7.0 -t 1 --acc_start -100 --acc_end 100 --ram_limit_gb 20.0 --dm_start 500 --dm_end 3000 -n 4' 
 
 # PulsarX folding
 # Using COMPACT peasoup candidate folding script 
