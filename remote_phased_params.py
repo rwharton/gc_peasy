@@ -33,10 +33,6 @@ sing_dir    = "/hercules/results/rwharton/singularity_images"
 peasoup_sif = "%s/peasoup_keplerian.sif" %sing_dir
 psrX_sif    = "%s/pulsarx_latest.sif" %sing_dir
 
-# Resume previous processing?
-resume    = 0
-copy_fil  = 0
-
 
 # Processing steps to do
 do_filtool    = 1      # Run filtool 
