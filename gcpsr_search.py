@@ -237,6 +237,7 @@ def run_psrX_fold(beamname, fil_dir, results_dir):
 
     psrX_sif = params.psrX_sif
     par_str  = params.psrX_opts
+    threads  = params.fold_threads
 
     # Set filterbank file name... filtools appends a _01 
     # this is ugly and hard coded
@@ -262,6 +263,7 @@ def run_psrX_fold(beamname, fil_dir, results_dir):
     
     fold_cmd = f"python {src_dir}/fold_cands.py " +\
                f"-i {results_dir}/overview.xml " +\
+               f"-threads {threads} " +\
                f"-t pulsarx -p {temp_file}"  
     print(f"{fold_cmd=}")
     sing_cmd = f"singularity exec -B {bstr} {psrX_sif} {fold_cmd}"

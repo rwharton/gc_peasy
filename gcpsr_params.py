@@ -66,6 +66,7 @@ psoup_opts = '-m 7.0 -t 1 --acc_start -100 --acc_end 100 --ram_limit_gb 20.0 --d
 # template should be in {src_dir}/templates/
 fold_template = "meerkat_fold_S4.template"
 psrX_opts = ""
+fold_threads = 12
 
 # TransientX options
 #transientx_fil -v -o [outbase] 
@@ -76,6 +77,6 @@ psrX_opts = ""
 #               -f cfbf00088_01.fil
 
 # all options besides outbase name and infile name
-tX_opts = "-v -t 24 --zapthre 3.0 --fd 1 --overlap 0.1 --dms 500 --ddm 10 --ndm 300 --thre 7 --maxw 0.1 --snrloss 0.1 -l 2.0 --drop -z kadaneF 8 4 zdot" 
+tX_opts = "-v -t 12 --zapthre 3.0 --fd 1 --overlap 0.1 --dms 500 --ddm 10 --ndm 300 --thre 7 --maxw 0.1 --snrloss 0.1 -l 2.0 --drop -z kadaneF 8 4 zdot" 
 # replot
 #replot_fil -v -t 4 --zapthre 3.0 --td 1 --fd 1 --dmcutoff 3 --widthcutoff 0.1 --snrcutoff 7 --snrloss 0.1 --zap --zdot --kadane 8 4 7 --candfile test.cands --clean -f *.fil
