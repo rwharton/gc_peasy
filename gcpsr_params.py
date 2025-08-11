@@ -55,7 +55,7 @@ ftool_opts = '-t 4 -z kadaneF 4 8 zdot'
 #        --dm_file my_dm_trials.txt \
 #        --ram_limit_gb 180.0 \
 #        -n 4
-psoup_opts = '-m 7.0 -t 1 --acc_start -100 --acc_end 100 --ram_limit_gb 20.0 --dm_start 500 --dm_end 3000 -n 5' 
+psoup_opts = '-m 7.0 -t 2 --acc_start -100 --acc_end 100 --ram_limit_gb 20.0 --dm_start 500 --dm_end 3000 -n 6' 
 
 # PulsarX folding
 # Using COMPACT peasoup candidate folding script 
@@ -79,4 +79,8 @@ fold_threads = 12
 # all options besides outbase name and infile name
 tX_opts = "-v -t 12 --zapthre 3.0 --fd 1 --overlap 0.1 --dms 500 --ddm 10 --ndm 300 --thre 7 --maxw 0.1 --snrloss 0.1 -l 2.0 --drop -z kadaneF 8 4 zdot" 
 # replot
-#replot_fil -v -t 4 --zapthre 3.0 --td 1 --fd 1 --dmcutoff 3 --widthcutoff 0.1 --snrcutoff 7 --snrloss 0.1 --zap --zdot --kadane 8 4 7 --candfile test.cands --clean -f *.fil
+#replot_fil -v -t 4 --zapthre 3.0 --td 1 --fd 1 
+#           --dmcutoff 3 --widthcutoff 0.1 --snrcutoff 7 
+#           --snrloss 0.1 --zap --zdot --kadane 8 4 7 
+#           --candfile test.cands --clean -f *.fil
+replot_opts = "-v -t 6 --zapthre 3.0 --td 1 --fd 1 --dmcutoff 3 --widthcutoff 0.1 --snrcutoff 7 --snrloss 0.1 --zap --zdot --kadane 8 4 7 --clean"

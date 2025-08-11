@@ -299,17 +299,34 @@ def organize_sp_results(results_dir):
     if not os.path.exists(out_dir):
         os.mkdir(out_dir)
 
+    # make a directory for non sifted
+    all_dir = f"{out_dir}/all"
+    if not os.path.exists(all_dir):
+        os.mkdir(all_dir)
+    
+    # make a directory for replot sifted
+    sift_dir = f"{out_dir}/sifted"
+    if not os.path.exists(sift_dir):
+        os.mkdir(sift_dir)
+
+    # Move over replot files first since they 
+    # will all have "replot" in the name
+    replot_files = glob(f"{results_dir}/*replot*")
+    for rr in replot_files:
+        shutil.move(rr, sift_dir)
+
+    # everything else will be from before sifting
     # move pngs
     png_files = glob(f"{results_dir}/*.png")
     for pp in png_files:
-        shutil.move(pp, out_dir)
+        shutil.move(pp, all_dir)
 
-    # move cand file
+    # move cand files
     cc_files =  glob(f"{results_dir}/*.cands") 
 
     for cc in cc_files:
         if os.path.exists(cc):
-            shutil.move(cc, out_dir)    
+            shutil.move(cc, all_dir)    
         else:
             print("No such file:")
             print(f"  {cc}")
@@ -319,12 +336,14 @@ def organize_sp_results(results_dir):
 
 def run_transientX(beamname, fil_dir, results_dir):
     """
-    Run transientX single pulse search on fil file
+    Run transientX single pulse search on fil file 
+    and then run replot_fil to filter out duplicates
     """
     t_start = time.time()
 
     psrx_sif = params.psrX_sif
-    par_str  = params.tX_opts
+    tpar_str  = params.tX_opts
+    rpar_str  = params.replot_opts
 
     # Set filterbank file name... filtools appends a _01 
     # this is ugly and hard coded
@@ -340,19 +359,40 @@ def run_transientX(beamname, fil_dir, results_dir):
     else:
         bstr = f"{fil_dir},{results_dir}"
     print(f"{bstr=}")
-    
-    psrx_cmd = f"transientx_fil {par_str} -o {outbase} " +\
+
+    ############################
+    ###  run transientx_fil  ###
+    ############################
+    psrx_cmd = f"transientx_fil {tpar_str} -o {outbase} " +\
                f"-f {filfile}"
     print(f"{psrx_cmd=}")
-    sing_cmd = f"singularity exec --nv -B {bstr} {psrx_sif} {psrx_cmd}"
-    #stderr = open('err.txt', 'a+')
-    #stdout = open('out.txt', 'a+')
+    sing_cmd = f"singularity exec -B {bstr} {psrx_sif} {psrx_cmd}"
 
-    # will not fail properly because the thing INSIDE
-    # singularity failed, not the singularity command
-    # need to check output
-    try_cmd(sing_cmd)
-    
+    #try_cmd(sing_cmd)
+
+    ########################
+    ###  run replot_fil  ###
+    ########################
+
+    # Get cands file
+    cfiles = glob(f"{results_dir}/{outbase}*cands")
+    if len(cfiles) == 1:
+        cand_file = cfiles[0]
+        replot_cmd = f"replot_fil {rpar_str} " +\
+                     f"--candfile {cand_file} -f {filfile}"
+        print(f"{replot_cmd=}")
+        sing_cmd = f"singularity exec -B {bstr} {psrx_sif} {replot_cmd}"
+        try_cmd(sing_cmd)
+
+    elif len(cfiles) == 0:
+        print("single pulse candfile not found!")
+        print("...skipping replot")
+   
+    else:
+        print("too many candfiles found!")
+        print(cfiles)
+        print("...skipping replot")
+
     # Make cands directory and move results there
     organize_sp_results(results_dir)
 
@@ -650,14 +690,14 @@ if __name__ == "__main__":
             tt.sp = dt_sp
 
         # Copy back results
-        get_results(results_LOCAL, results_HOST)
+        #get_results(results_LOCAL, results_HOST)
 
     except:
         print("Something failed!!!!")
 
     finally:
         # Delete everything from compute node
-        cleanup_beam(beam_HOST)
+        #cleanup_beam(beam_HOST)
         # Finish up time profiling and print summary to screen
         t_finish = time.time()
         tt.total = t_finish - t_start
