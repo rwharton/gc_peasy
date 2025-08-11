@@ -31,7 +31,7 @@ echo ""
 echo "ls ${TMPDIR}"
 ls $TMPDIR
 
-python -u /u/rwharton/src/searching/peasoup/remote_phased_search.py $TMPDIR
+python -u /u/rwharton/src/searching/peasoup/gcpsr_search.py $TMPDIR
 
 echo "ls ${TMPDIR}"
 ls $TMPDIR

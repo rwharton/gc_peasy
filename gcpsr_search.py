@@ -1,7 +1,7 @@
 import os
 import sys
 import time
-import remote_phased_params as params
+import gcpsr_params as params
 import subprocess as sp
 from glob import glob
 import shutil
