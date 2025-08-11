@@ -1,0 +1,38 @@
+#!/bin/bash -l
+# NOTE the -l flag!
+#
+#SBATCH -J slurm_test
+#SBATCH -o test.output
+#SBATCH -e test.output
+# Default in slurm
+#SBATCH -D ./
+#SBATCH --mail-user rswharton95@gmail.com 
+#SBATCH --mail-type=ALL
+
+#SBATCH -p gpu.q
+#SBATCH --gres=gpu:1
+
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=24
+
+# Request 3 hours run time
+#SBATCH -t 3:0:0
+#SBATCH --mem=30000
+
+module load anaconda/3/2023.03
+
+echo $TMPDIR
+echo $JOB_ID
+echo $JOB_NAME
+echo $HOSTNAME
+echo ""
+
+echo "ls ${TMPDIR}"
+ls $TMPDIR
+
+python -u /u/rwharton/src/searching/peasoup/remote_phased_search.py $TMPDIR
+
+echo "ls ${TMPDIR}"
+ls $TMPDIR
+

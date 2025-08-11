@@ -38,9 +38,9 @@ class Timer:
     def write_summary(self, outfile):
         fout = open(outfile, 'w')
         fout.write( "****************************************************\n")
-        fout.write( "                  TIME SUMMARY                      \n)")
-        fout.write( "****************************************************\n)")
-        fout.write( "\n"                                                     )
+        fout.write( "                  TIME SUMMARY                      \n")
+        fout.write( "****************************************************\n")
+        fout.write( "\n"                                                    )
         fout.write( "Start Time: %s\n" %self.dstart)
         fout.write( "Stop Time:  %s\n" %self.dstop)
         fout.write( "\n"                                                     )
