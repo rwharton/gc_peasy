@@ -146,3 +146,29 @@ single pulse                     16.57
 
 Total Runtime = 62.50 min
 ```
+
+## Running on a Cluster
+The pipeline was written to be run on a node of a cluster. Because 
+of this, we try to be careful about removing files on the node when
+we are done.  So the general outline of the script is:
+
+```
+try:
+    Copy over files to local area
+
+    Do various processing steps 
+
+    Copy the relevant files back to results directory 
+
+except: 
+    Catch exception if something fails
+
+finally:
+    Regardless of whether things worked or not, 
+    delete everything from the working directory 
+    on the remote node.
+```
+
+This makes sure we don't leave anything on the node, but can sometimes 
+be a little annoying because intermediate products are lost if the 
+pipeline fails at a later step.
