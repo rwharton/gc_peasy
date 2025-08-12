@@ -6,8 +6,6 @@
 #SBATCH -e test.output
 # Default in slurm
 #SBATCH -D ./
-#SBATCH --mail-user rswharton95@gmail.com 
-#SBATCH --mail-type=ALL
 
 #SBATCH -p gpu.q
 #SBATCH --gres=gpu:1
