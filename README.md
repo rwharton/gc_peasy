@@ -115,3 +115,34 @@ replot_opts = "-v -t 6 --zapthre 3.0 --td 1 --fd 1 --dmcutoff 3 --widthcutoff 0.
 ``` 
 
 In the future these will be passed as JSON files.
+
+
+## Results
+If you run everything, you will get the following in `results_dir/cfbfXXXXX`:
+
+* `cand_plots`: `PulsarX` plots of the `peasoup` candidates 
+* `sp_plots`: Single pulse plots found with `TransientX`.
+    * `sp_plots/all`: All the plots of candidates 
+    * `sp_plots/sifted`: Candidates left after sifting with `replot_fil`
+* `overview.xml`: Candidate list produced by `peasoup`
+* `cfbfXXXXX_YYYYMMDDTHHMMSS.log`: Timing log file produced after each run.
+
+The timing log gives the breakdown of how long each task took:
+
+```
+****************************************************
+                  TIME SUMMARY
+****************************************************
+
+Start Time: 2025-08-12T10:27:30
+Stop Time:  2025-08-12T11:30:00
+
+Program:                         Running Time (min):
+--------                         -----------------
+filtool                          15.07
+peasoup                          13.90
+fold                             15.95
+single pulse                     16.57
+
+Total Runtime = 62.50 min
+```
