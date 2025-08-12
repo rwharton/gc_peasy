@@ -368,7 +368,7 @@ def run_transientX(beamname, fil_dir, results_dir):
     print(f"{psrx_cmd=}")
     sing_cmd = f"singularity exec -B {bstr} {psrx_sif} {psrx_cmd}"
 
-    #try_cmd(sing_cmd)
+    try_cmd(sing_cmd)
 
     ########################
     ###  run replot_fil  ###
@@ -400,72 +400,6 @@ def run_transientX(beamname, fil_dir, results_dir):
     dt = t_end - t_start
 
     return dt
-
-
-#def organize_results(work_dir):
-#    """
-#    Put *out + *err files into a directory
-#
-#    Put *dat + *fft + *inf files into a directory
-#    """
-#    out_dir = "%s/output_files" %(work_dir)
-#
-#    # Collect all errs and outs
-#    ostr_list = ["out", "err"]
-#    for ostr in ostr_list:
-#        ofiles = glob("%s/*%s" %(work_dir, ostr))
-#        if len(ofiles):
-#            # If files exist and out_dir doesnt, make it
-#            if not os.path.exists(out_dir):
-#                os.makedirs(out_dir)
-#            for ofile in ofiles:
-#                shutil.move(ofile, out_dir)
-#        else: pass
-#
-#    # Collect all infs, dats, and ffts
-#    dmstr_list = ["inf", "dat", "fft"]
-#    for dmstr in dmstr_list:
-#        dmfiles = glob("%s/*%s" %(work_dir, dmstr))
-#        dm_dir = "%s/dm_%s" %(work_dir, dmstr)
-#        if len(dmfiles):
-#            # If files exist and dm_dir doesnt, make it
-#            if not os.path.exists(dm_dir):
-#                os.makedirs(dm_dir)
-#            for dmfile in dmfiles:
-#                shutil.move(dmfile, dm_dir)
-#        else: pass
-#
-#    return
-#    
-
-def search_beam(filname, fil_dir, work_dir):
-    tt = Timer()
-    t_start = time.time()
-    
-    print("Results Directory: %s\n" %work_dir)
-    print("fil Directory: %s\n" %fil_dir)
-    print("File Name: %s\n" %filname)
-    
-    # Check to see if results directory exists. If not, create it.
-    if not os.path.exists(work_dir):
-        os.makedirs(work_dir)
-    
-    # If we haven't done so already, go to results directory
-    os.chdir(work_dir)
-
-    if params.do_peasoup:
-        dt_ps = run_peasoup(filname, fil_dir, work_dir)
-    
-    # Organize stray files into folders
-    #organize_results(work_dir)
-
-    # Finish up time profiling and print summary to screen
-    t_finish = time.time()
-    tt.total = t_finish - t_start
-    tt.print_summary()
-    tt.write_summary("%s.log" %filname)
-
-    return
 
 
 def setup(beamname, local_fil, local_results, host_fil, host_results):
@@ -567,7 +501,7 @@ def get_results(local_results, host_results):
 
     # Copy them over
     if len(misc_files):
-        for mm_file in mm_files:
+        for mm_file in misc_files:
             print(mm_file)
             fname = mm_file.split('/')[-1]
             shutil.copyfile(mm_file, "%s/%s" %(local_results, fname))
@@ -690,14 +624,14 @@ if __name__ == "__main__":
             tt.sp = dt_sp
 
         # Copy back results
-        #get_results(results_LOCAL, results_HOST)
+        get_results(results_LOCAL, results_HOST)
 
     except:
         print("Something failed!!!!")
 
     finally:
         # Delete everything from compute node
-        #cleanup_beam(beam_HOST)
+        cleanup_beam(beam_HOST)
         # Finish up time profiling and print summary to screen
         t_finish = time.time()
         tt.total = t_finish - t_start
