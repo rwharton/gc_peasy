@@ -1,0 +1,131 @@
+{   
+    "proc_steps" : 
+        {
+            "filtool"       : true,
+            "peasoup"       : true,
+            "fold"          : true,
+            "tx_sp_search"  : true,
+            "tx_sp_filter"  : true
+        }, 
+
+    "dirs" :
+        {
+            "raw_dir"     : "/hercules/results/rwharton/mmgps_gc/raw", 
+            "results_dir" : "/hercules/results/rwharton/mmgps_gc/search", 
+            "src_dir"     : "/u/rwharton/src/searching/peasoup/v2" 
+        }, 
+
+    "filtool" :
+        {
+            "sif" : 
+                {
+                    "dir"  : "/hercules/results/rwharton/singularity_images", 
+                    "file" : "pulsarx_latest.sif" 
+                }, 
+
+            "opts" : 
+                {
+                    "threads" : 4,
+                    "td" : 1, 
+                    "fd" : 1, 
+                    "rfi" : false,
+                    "verbose": false
+                }
+        },
+
+    "peasoup" :
+        {
+            "sif" : 
+                {
+                    "dir"  : "/hercules/results/rwharton/singularity_images", 
+                    "file" : "peasoup_keplerian.sif" 
+                }, 
+
+            "opts" : 
+                {
+                    "num_threads" : 1,
+                    "min_snr" : 7,
+                    "acc_start" : -100, 
+                    "acc_end" : 100, 
+                    "ram_limit_gb" : 100.0,
+                    "dm_start" : 500, 
+                    "dm_end" : 3000, 
+                    "nharmonics": 4, 
+                    "limit" : 1000, 
+                    "verbose": false
+                }
+        },
+
+    "fold" :
+        {
+            "sif" : 
+                {
+                    "dir"  : "/hercules/results/rwharton/singularity_images", 
+                    "file" : "pulsarx_latest.sif"
+                }, 
+
+            "template" : "meerkat_fold_S4.template", 
+
+            "opts" :
+                {
+                    "pulsarx_threads" : 8,
+                    "fold_technique" : "pulsarx", 
+                    "verbose": false
+                }
+        },
+
+    "tx_sp_search" :
+        {
+            "sif" : 
+                {
+                    "dir"  : "/hercules/results/rwharton/singularity_images", 
+                    "file" : "pulsarx_latest.sif"
+                }, 
+
+            "opts" : 
+                {
+                    "threads" : 6,
+                    "td" : 1, 
+                    "fd" : 1, 
+                    "overlap" : 0.1, 
+                    "dms" : 500, 
+                    "ddm" : 10, 
+                    "ndm" : 300, 
+                    "thre" : 7, 
+                    "maxw" : 0.1, 
+                    "snrloss" : 0.1, 
+                    "seglen" : 2.0, 
+                    "drop" : true,
+                    "rfi" : "kadaneF 8 4 zdot",
+                    "verbose": false
+                }
+        },
+
+    "tx_sp_filter" :
+        {
+            "sif" : 
+                {
+                    "dir"  : "/hercules/results/rwharton/singularity_images", 
+                    "file" : "pulsarx_latest.sif"
+                }, 
+
+            "opts" :
+                {
+                    "threads" : 6,
+                    "td" : 1, 
+                    "fd" : 1, 
+                    "zapthre" : 3, 
+                    "dmcutoff" : 3, 
+                    "widthcutoff" : 0.1, 
+                    "snrcutoff" : 7,
+                    "snrloss" : 0.1, 
+                    "zap" : true, 
+                    "zdot" : true, 
+                    "kadane" : "8 4 7",
+                    "clean" : true, 
+                    "verbose": false
+                }
+        }
+}
+
+
