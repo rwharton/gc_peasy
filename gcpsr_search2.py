@@ -600,7 +600,7 @@ def setup(beamname, local_fil, local_results,
         fil_list.sort()
         
         print("\n\nLooking for fil files in:")
-        print(f"   {local_fil}")
+        print(f"   {local_results}")
         print(f"   Matching on {glob_str}")
         print(f"Found {len(fil_list)} fil files:")
         for ffn in fil_list:
@@ -618,7 +618,17 @@ def setup(beamname, local_fil, local_results,
         shutil.copy(fil_list[0], host_results)
 
     else: pass
-    
+
+    # If we are running fold then we either need 
+    # to run peasoup first or copy over a cand list
+    if check_proc(jdict, "fold") and not check_proc(jdict, "peasoup"):
+        print("Folding but NOT searching")
+        print(f"Looking for overview.xml in {local_results}")
+        xml_file = f"{local_results}/overview.xml"
+        if os.path.exists(xml_file):
+            print(f"Found xml file: {xml_file}")
+            shutil.copy(xml_file, host_results)
+
     return
 
 
