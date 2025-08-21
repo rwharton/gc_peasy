@@ -592,7 +592,9 @@ def setup(beamname, local_fil, local_results,
     # If we are NOT running filtool then the combined 
     # data file should already exist in LOCAL_RESULTS,
     # so we can just copy it over
-    elif (check_proc(jdict, "peasoup") or check_proc(jdict, "fold")):
+    elif (check_proc(jdict, "peasoup") or \
+          check_proc(jdict, "fold") or \
+          check_proc(jdict, "tx_sp_search")):
         glob_str = f"{local_results}/{beamname}*.fil"
         fil_list = glob(glob_str)
         fil_list.sort()
