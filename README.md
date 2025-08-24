@@ -9,12 +9,12 @@ for single pulse searching.
 
 ## Overview 
 To run the pipeline, make the desired changes to the 
-parameter file (`gcpsr_params.py`) and run the search 
-script (`gcpsr_search.py`), indicating the top of the 
-(temporary) work directory:
+JSON parameter file (`proc_args.json`) and run the search 
+script (`gcpsr_search2.py`), indicating the top of the 
+(temporary) work directory and the beam number.
 
 ```
-python gcpsr_search.py /path/to/top/of/workdir
+python gcpsr_search2.py --work_dir /path/to/top/of/workdir --beam 2 --args_json /path/to/proc_args.json
 ```
 
 This is designed to be run on a remote cluster node, 
@@ -50,9 +50,12 @@ which are the various beam directories.  We set these in
 the parameter file as:
 
 ```
-raw_dir     = "/hercules/results/rwharton/mmgps_gc/raw"
-results_dir = "/hercules/results/rwharton/mmgps_gc/search"
-beamname = "cfbf00088"
+"dirs" :
+        {
+            "raw_dir"     : "/hercules/results/rwharton/mmgps_gc/raw",
+            "results_dir" : "/hercules/results/rwharton/mmgps_gc/search",
+            "src_dir"     : "/u/rwharton/src/searching/peasoup/v2"
+        },
 ```
 
 ## Software
@@ -61,13 +64,17 @@ The pipeline requires [peasoup](https://github.com/ewanbarr/peasoup),
 [TransientX](https://github.com/ypmen/TransientX). Instead of 
 installing them proper, we opt instead to utilize them through 
 singularity containers.  The location of the relevant singularity 
-files is specified in the parameter file:
+files is specified under the relevant task in the parameter file.
+For example, under the filtool step:
 
 ```
-# Singularity files
-sing_dir    = "/hercules/results/rwharton/singularity_images"
-peasoup_sif = "%s/peasoup_keplerian.sif" %sing_dir
-psrX_sif    = "%s/pulsarx_latest.sif" %sing_dir
+"filtool" :
+        {
+            "sif" :
+                {
+                    "dir"  : "/hercules/results/rwharton/singularity_images",
+                    "file" : "pulsarx_latest.sif"
+                },
 ```
 
 while this is done entirely out of laziness, it has the side 
@@ -75,46 +82,89 @@ benefit of ensuring repeatability (so long as you use the same
 singularity files).
 
 ## Processing Steps
-There are four main processing steps the pipeline can do. 
-You can decide which to do in the parameter file by setting 
-the following to 1 (do that step) or 0 (do not do that step).
+The processing steps are at the top of the JSON file:
 
 ```
-# Processing steps to do
-do_filtool    = 1      # Run filtool
-do_peasoup    = 1      # Run PEASOUP search
-do_fold       = 1      # Fold data
-do_sp         = 1      # Single Pulse Search with TransientX
+ "proc_steps" :
+        {
+            "filtool"       : true,
+            "peasoup"       : true,
+            "fold"          : true,
+            "tx_sp_search"  : true,
+            "tx_sp_filter"  : true
+        },
 ```
-
-Currently, we are not keeping the cleaned filterbank file 
-after processing, so you generally will have to do the 
-`do_filtool` step any time you need the filterbank file 
-for subsequent steps.  This can be changed later if desired.
+The names of the steps denote a processing task that 
+is to be done.  Simply put `true` if you want to run 
+that step and `false` if you do not.  Each step has 
+certain requirements that will be checked when it is 
+run. The name of each step denotes a keyword later in 
+the JSON file which contains the sif file path and 
+processing arguments.
 
 
 ## Setting Options for each Task
-This is currently the ugliest part of the pipeline and 
-something that we will hopefully change soon.  But for 
-now, the way you specify the parameters of a given step 
-is to provide the relevant command line arguments as a 
-string. For example:
+The arguments to be run by each task are given 
+under `opts` in the task dictionary.  So, for 
+`peasoup` we have:
 
 ```
-# Filtool
-ftool_opts = '-t 4 -z kadaneF 4 8 zdot'
+ "peasoup" :
+        {
+            "sif" :
+                {
+                    "dir"  : "/hercules/results/rwharton/singularity_images",
+                    "file" : "peasoup_keplerian.sif"
+                },
 
-# Peasoup
-psoup_opts = '-m 7.0 -t 1 --acc_start -100 --acc_end 100 --ram_limit_gb 20.0 --dm_start 500 --dm_end 3000 -n 8'
+            "opts" :
+                {
+                    "num_threads" : 1,
+                    "min_snr" : 7,
+                    "acc_start" : -100,
+                    "acc_end" : 100,
+                    "ram_limit_gb" : 100.0,
+                    "dm_start" : 500,
+                    "dm_end" : 3000,
+                    "nharmonics": 4,
+                    "limit" : 1000,
+                    "verbose": false
+                }
+        },
+```
 
-# TransientX
-tX_opts = "-v -t 12 --zapthre 3.0 --fd 1 --overlap 0.1 --dms 500 --ddm 10 --ndm 300 --thre 7 --maxw 0.1 --snrloss 0.1 -l 2.0 --drop -z kadaneF 8 4 zdot"
+The first part points to the `sif` file, and the second 
+part gives the keyword arguments that are passed to the 
+`peasoup` task.  For simplicity (to me!), we are using the 
+exact names to the double dashed keyword arguments.  So
 
-# TransientX (replot)
-replot_opts = "-v -t 6 --zapthre 3.0 --td 1 --fd 1 --dmcutoff 3 --widthcutoff 0.1 --snrcutoff 7 --snrloss 0.1 --zap --zdot --kadane 8 4 7 --clean"
-``` 
+```
+"acc_end" : 100
+```
 
-In the future these will be passed as JSON files.
+corresponds to 
+
+```
+peasoup --acc_end 100
+```
+
+If you want to include a tag that does not accept an argument 
+(e.g., the verbose tag), just include the keyword and add true, so
+
+```
+"verbose" : true
+```
+
+would give
+
+```
+peasoup --verbose
+```
+
+and `false` would just not include that tag.
+
+By keeping this consistent usage, you can add any additional 
+argument to this list so long as you use the `--` name.
 
 
 ## Results
